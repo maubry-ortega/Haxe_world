@@ -3,33 +3,35 @@ package entities;
 import h2d.Scene;
 import h2d.Graphics;
 import hxd.Key;
+import utils.Movement;
 
-/**
- * Representa al jugador en el juego.
- */
 class Player {
-    public var sprite:Graphics;
-    public var x:Int;
-    public var y:Int;
-    public var speed:Int = 4;
+    var sprite:Graphics;
+    var movement:Movement;
 
-    public function new(scene:Scene, x:Int, y:Int) {
-        this.x = x;
-        this.y = y;
+    public function new(scene:Scene, x:Float, y:Float) {
         sprite = new Graphics(scene);
-        sprite.beginFill(0xFF0000); // Rojo para el jugador
+        sprite.beginFill(0xff0000);
         sprite.drawCircle(0, 0, 10);
         sprite.endFill();
-        sprite.x = x;
-        sprite.y = y;
+        sprite.setPosition(x, y);
+
+        movement = new Movement(x, y, 2.0, 0.2, 0.9);
     }
 
     public function update() {
-        if (Key.isDown(Key.LEFT)) x -= speed;
-        if (Key.isDown(Key.RIGHT)) x += speed;
-        if (Key.isDown(Key.UP)) y -= speed;
-        if (Key.isDown(Key.DOWN)) y += speed;
-        sprite.x = x;
-        sprite.y = y;
+        movement.updateMovement(
+            Key.isDown(Key.LEFT), 
+            Key.isDown(Key.RIGHT), 
+            Key.isDown(Key.UP), 
+            Key.isDown(Key.DOWN)
+        );
+
+        // Aplicar posición a la entidad
+        sprite.x = movement.x;
+        sprite.y = movement.y;
     }
+
+    public function getX():Float return sprite.x;
+    public function getY():Float return sprite.y;
 }

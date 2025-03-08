@@ -25,6 +25,7 @@ class Main extends App {
     var npcs:Array<NPC> = [];
     var player:Player;
     var camera:CameraController;
+    var isSpectator:Bool = false; // Estado de la cámara
 
     override function init() {
         scene = new Scene();
@@ -48,15 +49,17 @@ class Main extends App {
         renderer = new IsometricRenderer(scene, terrain);
         gameUI = new GameUI(scene);
 
-        // Crear Jugador
-        player = new Player(scene, 400, 300);
+        // Crear Jugador en una posición válida dentro del mapa
+        var startX = Std.int(terrain.width / 2);
+        var startY = Std.int(terrain.height / 2);
+        player = new Player(scene, startX * 32, startY * 16);
         camera = new CameraController(scene, player);
 
-        // Generar NPCs aleatorios
+        // Generar NPCs dentro de los límites del mapa
         for (i in 0...5) {
-            var startX = Std.int(Math.random() * terrain.width);
-            var startY = Std.int(Math.random() * terrain.height);
-            var npc = new NPC(scene, startX * 32, startY * 16);
+            var npcX = Std.int(Math.random() * terrain.width);
+            var npcY = Std.int(Math.random() * terrain.height);
+            var npc = new NPC(scene, npcX * 32, npcY * 16);
             npcs.push(npc);
         }
     }
@@ -69,15 +72,17 @@ class Main extends App {
             renderer = new IsometricRenderer(scene, terrain);
             gameUI = new GameUI(scene);
 
-            // Crear Jugador
-            player = new Player(scene, 400, 300);
+            // Crear Jugador en una posición válida
+            var startX = Std.int(terrain.width / 2);
+            var startY = Std.int(terrain.height / 2);
+            player = new Player(scene, startX * 32, startY * 16);
             camera = new CameraController(scene, player);
 
-            // Generar NPCs aleatorios
+            // Generar NPCs dentro del mapa
             for (i in 0...5) {
-                var startX = Std.int(Math.random() * terrain.width);
-                var startY = Std.int(Math.random() * terrain.height);
-                var npc = new NPC(scene, startX * 32, startY * 16);
+                var npcX = Std.int(Math.random() * terrain.width);
+                var npcY = Std.int(Math.random() * terrain.height);
+                var npc = new NPC(scene, npcX * 32, npcY * 16);
                 npcs.push(npc);
             }
         } else {
@@ -89,6 +94,12 @@ class Main extends App {
         if (gameUI != null) gameUI.update(dt);
         if (player != null) player.update();
         if (camera != null) camera.update();
+
+        // Cambio de modo de cámara con la tecla TAB
+        if (hxd.Key.isPressed(hxd.Key.TAB)) {
+            isSpectator = !isSpectator;
+            camera.setMode(isSpectator);
+        }
     }
 
     static function main() {

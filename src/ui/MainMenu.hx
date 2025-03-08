@@ -3,17 +3,14 @@ package ui;
 import h2d.Scene;
 import h2d.Text;
 import h2d.Interactive;
-import hxd.Event;
+import hxd.res.DefaultFont;
 
-/**
- * Menú principal con opciones de "Nuevo Juego" y "Cargar Mundo".
- */
 class MainMenu {
-    private var scene:Scene;
-    private var title:Text;
-    private var newGameButton:Interactive;
-    private var loadGameButton:Interactive;
-    
+    var scene:Scene;
+    var title:Text;
+    var btnNewGame:Interactive;
+    var btnLoadGame:Interactive;
+
     public var onNewGame:Void->Void;
     public var onLoadGame:Void->Void;
 
@@ -21,28 +18,29 @@ class MainMenu {
         this.scene = scene;
 
         title = new Text(hxd.res.DefaultFont.get(), scene);
-        title.text = "Menú Principal";
-        title.x = 100;
-        title.y = 50;
+        title.text = "¡Bienvenido al Juego!";
+        title.setPosition(100, 50);
 
-        newGameButton = createButton("Nuevo Juego", 100, 100, function(e:hxd.Event) {
+        btnNewGame = createButton("Nueva Partida", 100, 150, function() {
             if (onNewGame != null) onNewGame();
         });
 
-        loadGameButton = createButton("Cargar Mundo", 100, 150, function(e:hxd.Event) {
+        btnLoadGame = createButton("Cargar Partida", 100, 200, function() {
             if (onLoadGame != null) onLoadGame();
         });
     }
 
-    private function createButton(text:String, x:Int, y:Int, callback:hxd.Event->Void):Interactive {
+    function createButton(text:String, x:Float, y:Float, callback:Void->Void):Interactive {
         var btn = new Interactive(200, 40, scene);
-        var btnText = new Text(hxd.res.DefaultFont.get(), btn);
-        btnText.text = text;
-        btnText.x = 10;
-        btnText.y = 10;
         btn.x = x;
         btn.y = y;
-        btn.onClick = callback;
+        btn.backgroundColor = 0x444444;
+
+        var btnText = new Text(hxd.res.DefaultFont.get(), btn);
+        btnText.text = text;
+        btnText.setPosition(10, 10);
+
+        btn.onClick = function(_) callback();
         return btn;
     }
 }
