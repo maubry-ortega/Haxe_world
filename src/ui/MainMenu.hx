@@ -3,6 +3,7 @@ package ui;
 import h2d.Scene;
 import h2d.Text;
 import h2d.Interactive;
+import hxd.Event;
 
 /**
  * Menú principal con opciones de "Nuevo Juego" y "Cargar Mundo".
@@ -24,16 +25,16 @@ class MainMenu {
         title.x = 100;
         title.y = 50;
 
-        newGameButton = createButton("Nuevo Juego", 100, 100, function() {
+        newGameButton = createButton("Nuevo Juego", 100, 100, function(e:hxd.Event) {
             if (onNewGame != null) onNewGame();
         });
 
-        loadGameButton = createButton("Cargar Mundo", 100, 150, function() {
+        loadGameButton = createButton("Cargar Mundo", 100, 150, function(e:hxd.Event) {
             if (onLoadGame != null) onLoadGame();
         });
     }
 
-    private function createButton(text:String, x:Int, y:Int, callback:Void->Void):Interactive {
+    private function createButton(text:String, x:Int, y:Int, callback:hxd.Event->Void):Interactive {
         var btn = new Interactive(200, 40, scene);
         var btnText = new Text(hxd.res.DefaultFont.get(), btn);
         btnText.text = text;

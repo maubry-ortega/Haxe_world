@@ -20,6 +20,10 @@ class MapGenerator {
         generateMap();
     }
 
+    public function getSeed():Int {
+        return seed;
+    }    
+
     /**
      * Genera el mapa usando ruido Perlin.
      */

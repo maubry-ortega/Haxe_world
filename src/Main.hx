@@ -1,68 +1,74 @@
 package;
 
-import h2d.Scene;
 import hxd.App;
-import hxd.Res;
+import h2d.Scene;
 import config.GameConfig;
-import game.GameWorld;
+import map.MapGenerator;
+import map.TileRenderer;
+import rendering.IsometricRenderer;
+import serialization.MapSerializer;
 import ui.GameUI;
+import ui.MainMenu;
+import ui.WorldSelection;
+import entities.NPC;
+import utils.MathUtils;
 
-/**
- * Punto de entrada principal del juego.
- */
 class Main extends App {
-    private var gameWorld:GameWorld;
-    private var ui:GameUI;
-
-    /**
-     * Método principal para ejecutar la aplicación.
-     */
-    public static function main() {
-        #if sys
-        try {
-            trace("[INFO] Inicializando recursos...");
-            Res.initEmbed();
-            trace("[INFO] Recursos inicializados correctamente.");
-        } catch (e:Dynamic) {
-            trace("[ERROR] No se pudo inicializar recursos: " + e);
-            return;
-        }
-        #end
-
-        trace("[INFO] Iniciando aplicación...");
-        new Main();
-    }
-
-    /**
-     * Inicialización de la ventana y la escena del juego.
-     */
+    var scene:Scene;
+    var renderer:IsometricRenderer;
+    var terrain:MapGenerator;
+    var gameUI:GameUI;
+    var mainMenu:MainMenu;
+    var worldSelection:WorldSelection;
+    var npcs:Array<NPC> = [];
+    
     override function init() {
-        trace("[INFO] Inicializando ventana y escena...");
-        try {
-            engine.backgroundColor = GameConfig.BACKGROUND_COLOR;
-            s2d.scaleMode = ScaleMode.LetterBox(GameConfig.WIDTH, GameConfig.HEIGHT);
+        scene = new Scene();
+        s2d.addChild(scene);
 
-            if (s2d == null) {
-                throw "[ERROR] La escena no se pudo inicializar correctamente.";
-            }
+        mainMenu = new MainMenu(scene);
+        mainMenu.onNewGame = showWorldSelection;
+        mainMenu.onLoadGame = loadGame;
+    }
 
-            gameWorld = new GameWorld(s2d, GameConfig.MAP_WIDTH, GameConfig.MAP_HEIGHT, GameConfig.TILE_SIZE);
-            ui = new GameUI(s2d);
-            trace("[INFO] Juego inicializado correctamente.");
-        } catch (e:Dynamic) {
-            trace("[ERROR] Fallo en init(): " + e);
+    function showWorldSelection() {
+        scene.removeChildren();
+        worldSelection = new WorldSelection(scene);
+        worldSelection.onCreateWorld = createNewWorld;
+        worldSelection.onLoadWorld = loadGame;
+    }
+
+    function createNewWorld() {
+        scene.removeChildren();
+        terrain = new MapGenerator(50, 50, 42);
+        renderer = new IsometricRenderer(scene, terrain);
+        gameUI = new GameUI(scene);
+
+        for (i in 0...5) {
+            var startX = Std.int(Math.random() * terrain.width);
+            var startY = Std.int(Math.random() * terrain.height);
+            var npc = new NPC(scene, startX * 32, startY * 16);
+            npcs.push(npc);
         }
     }
 
-    /**
-     * Bucle principal de actualización del juego.
-     */
+    function loadGame() {
+        var mapData = MapSerializer.loadMap("mapData.bson");
+        if (mapData != null) {
+            scene.removeChildren();
+            terrain = new MapGenerator(mapData.width, mapData.height, mapData.getSeed());
+            renderer = new IsometricRenderer(scene, terrain);
+            gameUI = new GameUI(scene);
+        } else {
+            trace("No se pudo cargar el mapa.");
+        }
+    }
+
     override function update(dt:Float) {
-        if (gameWorld != null) {
-            gameWorld.update(dt);
-        }
-        if (ui != null) {
-            ui.update(dt);
-        }
+        if (gameUI != null) gameUI.update(dt);
+    }
+
+    static function main() {
+        new Main();
     }
 }

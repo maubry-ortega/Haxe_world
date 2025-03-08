@@ -3,6 +3,7 @@ package ui;
 import h2d.Scene;
 import h2d.Text;
 import h2d.Interactive;
+import hxd.Event;
 
 /**
  * Pantalla para seleccionar un mundo existente o crear uno nuevo.
@@ -24,16 +25,16 @@ class WorldSelection {
         title.x = 100;
         title.y = 50;
 
-        createWorldButton = createButton("Crear Nuevo Mundo", 100, 100, function() {
+        createWorldButton = createButton("Crear Nuevo Mundo", 100, 100, function(e:hxd.Event) {
             if (onCreateWorld != null) onCreateWorld();
         });
 
-        loadWorldButton = createButton("Cargar Mundo", 100, 150, function() {
+        loadWorldButton = createButton("Cargar Mundo", 100, 150, function(e:hxd.Event) {
             if (onLoadWorld != null) onLoadWorld();
         });
     }
 
-    private function createButton(text:String, x:Int, y:Int, callback:Void->Void):Interactive {
+    private function createButton(text:String, x:Int, y:Int, callback:hxd.Event->Void):Interactive {
         var btn = new Interactive(200, 40, scene);
         var btnText = new Text(hxd.res.DefaultFont.get(), btn);
         btnText.text = text;

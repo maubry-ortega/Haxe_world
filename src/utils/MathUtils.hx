@@ -16,8 +16,8 @@ class MathUtils {
      */
     public static function isoToScreen(isoX:Int, isoY:Int, tileSize:Int):{ x:Int, y:Int } {
         return {
-            x: (isoX - isoY) * (tileSize / 2),
-            y: (isoX + isoY) * (tileSize / 4)
+            x: Std.int((isoX - isoY) * (tileSize / 2)),
+            y: Std.int((isoX + isoY) * (tileSize / 4))
         };
     }
 
@@ -26,8 +26,8 @@ class MathUtils {
      */
     public static function screenToIso(screenX:Int, screenY:Int, tileSize:Int):{ isoX:Int, isoY:Int } {
         return {
-            isoX: Math.round((screenX / (tileSize / 2) + screenY / (tileSize / 4)) / 2),
-            isoY: Math.round((screenY / (tileSize / 4) - screenX / (tileSize / 2)) / 2)
+            isoX: Std.int((screenX / (tileSize / 2) + screenY / (tileSize / 4)) / 2),
+            isoY: Std.int((screenY / (tileSize / 4) - screenX / (tileSize / 2)) / 2)
         };
     }
 }
