@@ -1,0 +1,10 @@
+-cp src
+-lib heaps
+-lib hlsdl
+-lib libnoise
+-D windowSize=1366x768
+-D resourcesPath=res
+-D analyzer-optimize
+-dce full
+-main Main
+-hl bin/Main.hl
